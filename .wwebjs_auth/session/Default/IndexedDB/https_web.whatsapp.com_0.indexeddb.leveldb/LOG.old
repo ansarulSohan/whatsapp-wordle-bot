@@ -1,0 +1,21 @@
+2022/06/13-23:05:46.100 10fc Creating DB E:\code\whatsapp-wordle-bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb since it was missing.
+2022/06/13-23:05:46.403 10fc Reusing MANIFEST E:\code\whatsapp-wordle-bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2022/06/13-23:06:12.189 4950 Level-0 table #5: started
+2022/06/13-23:06:12.395 4950 Level-0 table #5: 1172461 bytes OK
+2022/06/13-23:06:12.470 4950 Delete type=0 #3
+2022/06/13-23:06:18.091 44c4 Level-0 table #7: started
+2022/06/13-23:06:18.151 44c4 Level-0 table #7: 1183934 bytes OK
+2022/06/13-23:06:18.185 44c4 Delete type=0 #4
+2022/06/13-23:06:18.188 44c4 Compacting 1@1 + 1@2 files
+2022/06/13-23:06:18.345 44c4 Generated table #8@1: 23873 keys, 1687047 bytes
+2022/06/13-23:06:18.345 44c4 Compacted 1@1 + 1@2 files => 1687047 bytes
+2022/06/13-23:06:18.388 44c4 compacted to: files[ 0 0 1 0 0 0 0 ]
+2022/06/13-23:06:26.674 44c4 Level-0 table #10: started
+2022/06/13-23:06:26.818 44c4 Level-0 table #10: 1029148 bytes OK
+2022/06/13-23:06:26.899 44c4 Delete type=2 #5
+2022/06/13-23:06:26.900 44c4 Delete type=0 #6
+2022/06/13-23:06:26.900 44c4 Delete type=2 #7
+2022/06/13-23:06:27.055 1f5c Compacting 1@1 + 1@2 files
+2022/06/13-23:06:27.268 1f5c Generated table #11@1: 25758 keys, 2032684 bytes
+2022/06/13-23:06:27.268 1f5c Compacted 1@1 + 1@2 files => 2032684 bytes
+2022/06/13-23:06:27.358 1f5c compacted to: files[ 0 0 1 0 0 0 0 ]

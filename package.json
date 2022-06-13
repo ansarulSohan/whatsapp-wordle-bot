@@ -1,0 +1,30 @@
+{
+  "name": "whatsapp-wordle-bot",
+  "version": "1.0.0",
+  "description": "A simple whatsapp wordle bot",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ansarulSohan/whatsapp-wordle-bot.git"
+  },
+  "keywords": [
+    "Whatsapp",
+    "Bot",
+    "Wordle",
+    "whatsapp-web"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ansarulSohan/whatsapp-wordle-bot/issues"
+  },
+  "homepage": "https://github.com/ansarulSohan/whatsapp-wordle-bot#readme",
+  "dependencies": {
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.16.7"
+  }
+}
