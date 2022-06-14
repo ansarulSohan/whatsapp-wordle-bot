@@ -105,6 +105,6 @@ dist
 
 # Whatsapp Web local authentication directory
 .wwebjs_auth
-.wwebjs_auth/
-./.wwebjs_auth/
+.wwebjs_auth/session
+./.wwebjs_auth/session
 wwebjs_auth/

@@ -24,6 +24,19 @@ client.on('ready', () => {
 });
 
 client.on('message', (message) => {
+  message
+    .getChat()
+    .then((chat) => {
+      if (chat.isGroup) {
+        chat.getContact().then((contacts) => {
+          console.log(contacts);
+        });
+      }
+      console.log(chat);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   if (message.body === '!ping') {
     message.reply('pong');
   }
