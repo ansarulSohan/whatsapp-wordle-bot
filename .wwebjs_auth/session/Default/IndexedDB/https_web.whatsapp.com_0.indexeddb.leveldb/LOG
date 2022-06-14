@@ -1,37 +1,14 @@
-2022/06/13-23:06:57.718 1340 Reusing MANIFEST E:\code\whatsapp-wordle-bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
-2022/06/13-23:06:57.719 1340 Recovering log #9
-2022/06/13-23:06:57.879 1340 Reusing old log E:\code\whatsapp-wordle-bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000009.log 
-2022/06/13-23:06:57.879 1340 Delete type=2 #8
-2022/06/13-23:06:57.879 1340 Delete type=2 #10
-2022/06/13-23:07:19.427 38c0 Level-0 table #14: started
-2022/06/13-23:07:19.628 38c0 Level-0 table #14: 1127024 bytes OK
-2022/06/13-23:07:19.661 38c0 Delete type=0 #9
-2022/06/13-23:07:20.805 1850 Compacting 1@1 + 1@2 files
-2022/06/13-23:07:20.989 1850 Generated table #15@1: 26343 keys, 2214698 bytes
-2022/06/13-23:07:21.103 1850 Generated table #16@1: 12943 keys, 285162 bytes
-2022/06/13-23:07:21.103 1850 Compacted 1@1 + 1@2 files => 2499860 bytes
-2022/06/13-23:07:21.136 1850 compacted to: files[ 0 0 2 0 0 0 0 ]
-2022/06/13-23:07:21.136 1850 Delete type=2 #11
-2022/06/13-23:07:21.136 1850 Delete type=2 #14
-2022/06/13-23:08:13.931 1854 Level-0 table #18: started
-2022/06/13-23:08:14.081 1854 Level-0 table #18: 1098389 bytes OK
-2022/06/13-23:08:14.124 1854 Delete type=0 #13
-2022/06/13-23:08:15.198 38c0 Compacting 1@1 + 2@2 files
-2022/06/13-23:08:15.457 38c0 Generated table #19@1: 25851 keys, 2211123 bytes
-2022/06/13-23:08:15.550 38c0 Generated table #20@1: 29152 keys, 733506 bytes
-2022/06/13-23:08:15.550 38c0 Compacted 1@1 + 2@2 files => 2944629 bytes
-2022/06/13-23:08:15.581 38c0 compacted to: files[ 0 0 2 0 0 0 0 ]
-2022/06/13-23:08:15.581 38c0 Delete type=2 #15
-2022/06/13-23:08:15.581 38c0 Delete type=2 #16
-2022/06/13-23:08:15.581 38c0 Delete type=2 #18
-2022/06/13-23:09:00.435 1854 Level-0 table #22: started
-2022/06/13-23:09:00.624 1854 Level-0 table #22: 1075511 bytes OK
-2022/06/13-23:09:00.674 1854 Delete type=0 #17
-2022/06/13-23:09:00.806 44b4 Compacting 1@1 + 2@2 files
-2022/06/13-23:09:00.957 44b4 Generated table #23@1: 24336 keys, 2212995 bytes
-2022/06/13-23:09:01.073 44b4 Generated table #24@1: 41870 keys, 1122165 bytes
-2022/06/13-23:09:01.073 44b4 Compacted 1@1 + 2@2 files => 3335160 bytes
-2022/06/13-23:09:01.089 44b4 compacted to: files[ 0 0 2 0 0 0 0 ]
-2022/06/13-23:09:01.089 44b4 Delete type=2 #19
-2022/06/13-23:09:01.089 44b4 Delete type=2 #20
-2022/06/13-23:09:01.089 44b4 Delete type=2 #22
+2022/06/14-14:37:26.678 4e2c Reusing MANIFEST C:\Users\Ansarul Kabir Sohan\Desktop\whatsapp-wordle-bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/MANIFEST-000001
+2022/06/14-14:37:26.679 4e2c Recovering log #21
+2022/06/14-14:37:27.032 4e2c Reusing old log C:\Users\Ansarul Kabir Sohan\Desktop\whatsapp-wordle-bot\.wwebjs_auth\session\Default\IndexedDB\https_web.whatsapp.com_0.indexeddb.leveldb/000021.log 
+2022/06/14-14:37:40.107 19c Level-0 table #27: started
+2022/06/14-14:37:40.147 19c Level-0 table #27: 1115492 bytes OK
+2022/06/14-14:37:40.150 19c Delete type=0 #21
+2022/06/14-14:37:41.652 3098 Compacting 1@1 + 2@2 files
+2022/06/14-14:37:41.761 3098 Generated table #28@1: 27017 keys, 2214471 bytes
+2022/06/14-14:37:41.841 3098 Generated table #29@1: 43568 keys, 1557142 bytes
+2022/06/14-14:37:41.841 3098 Compacted 1@1 + 2@2 files => 3771613 bytes
+2022/06/14-14:37:41.843 3098 compacted to: files[ 0 0 2 0 0 0 0 ]
+2022/06/14-14:37:41.843 3098 Delete type=2 #23
+2022/06/14-14:37:41.843 3098 Delete type=2 #24
+2022/06/14-14:37:41.843 3098 Delete type=2 #27
