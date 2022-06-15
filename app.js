@@ -24,15 +24,11 @@ client.on('ready', () => {
 });
 
 client.on('message', (message) => {
+  console.log(message);
   message
     .getChat()
     .then((chat) => {
-      if (chat.isGroup) {
-        chat.getContact().then((contacts) => {
-          console.log(contacts);
-        });
-      }
-      console.log(chat);
+      console.log(chat.id);
     })
     .catch((err) => {
       console.log(err);
