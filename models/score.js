@@ -7,7 +7,6 @@ const scoreSchema = new mongoose.Schema({
   },
   username: {
     type: String,
-    required: true,
   },
   isGroup: {
     type: Boolean,
@@ -21,10 +20,7 @@ const scoreSchema = new mongoose.Schema({
     },
   },
   groupName: {
-    type: String,
-    required: function () {
-      return this.isGroup;
-    },
+    type: String
   },
   gameNumber: {
     type: Number,

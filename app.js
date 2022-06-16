@@ -3,6 +3,7 @@ const qrcode = require('qrcode-terminal');
 const { connectDB } = require('./db');
 
 const { Score } = require('./models/score');
+const { Group } = require('./models/groups');
 
 // Create an instance of the Client
 const client = new Client({
@@ -25,6 +26,77 @@ client.on('ready', () => {
   console.log('Client is ready');
 });
 
+// When someone is added to the group
+client.on('group_join', async (groupNotification) => {
+  const { recipientIds } = groupNotification;
+  const recipients = await groupNotification.getRecipients();
+  const { _serialized: user } = client.info.me;
+  const { participants, name } = await client.getChatById(
+    groupNotification.chatId
+  );
+  const mappedParticipants = participants.map((x) => {
+    return {
+      user: x.id.user,
+      isAdmin: x.id.isAdmin,
+      isSuperAdmin: x.id.isSuperAdmin,
+    };
+  });
+
+  //Chech if the added user is the bot.
+  console.log('recipients', recipientIds);
+  recipientIds.forEach((recipientId) => {
+    //if bot is added to a group
+    if (recipientId === user) {
+      //send welcome message
+      client.sendMessage(
+        groupNotification.chatId,
+        'Hi, I am Trackdle and I will track you Wordle score!!!'
+      );
+
+      //save group to db
+      const groupInfo = new Group({
+        groupId: groupNotification.chatId,
+        groupName: name,
+        participants: mappedParticipants,
+      });
+      // console.log(groupInfo)
+
+      //save to db
+      groupInfo
+        .save()
+        .then((group) => {
+          console.log('g' + group);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      // else, send welcome message mentionaing the user
+      client.sendMessage(
+        groupNotification.chatId,
+        `Hi ${
+          recipientIds.toString().split('@')[0]
+        },\n\nWelcome to Trackdle. To submit your Wordle score plese click the share button and post directly in the chat.\n\nEnjoy!`
+      );
+      Group.find({ groupId: groupNotification.chatId })
+        .then((group) => {
+          recipients.forEach((recipient) => {
+            group.participants.push({
+              user: recipient.id.user,
+              isAdmin: recipient.id.isAdmin,
+              isSuperAdmin: recipient.id.isSuperAdmin,
+            });
+          });
+          group.save();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      //update participants list
+    }
+  });
+});
+
 // async function action() {}
 client.on('message', async (message) => {
   try {
@@ -37,10 +109,11 @@ client.on('message', async (message) => {
     const userId = isGroup ? message.author : chat.id._serialized;
     const groupId = isGroup ? id._serialized : null;
     const groupName = isGroup ? chat.name : null;
-    console.log(body, username, isGroup, userId, groupId);
+    // console.log(body, username, isGroup, userId, groupId);
     // console.log('*********');
     // console.log(message);
-    console.log('------------');
+    // console.log('------------');
+
     // console.log(chat);
     const values = body.match(
       /Wordle\s(?<game>\d+)\s(?<score>[1-6]{1})\/6(?:\r?\n){2}(?<attempts>(?:(?:⬜|🟨|⬛|🟩|🟦){5}(?:\r?\n)){0,5}(?:⬜|🟨|⬛|🟩|🟦){5})/
