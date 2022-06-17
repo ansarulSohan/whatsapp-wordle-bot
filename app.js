@@ -5,6 +5,7 @@ const { connectDB } = require('./db');
 const { Score } = require('./models/score');
 const { Group } = require('./models/groups');
 const _ = require('lodash');
+const { getAvgScore } = require('./utils/scoreCalculator');
 
 // Create an instance of the Client
 const client = new Client({
@@ -66,7 +67,7 @@ client.on('group_join', async (groupNotification) => {
       groupInfo
         .save()
         .then((group) => {
-          console.log('g' + group);
+          // console.log('g' + group);
         })
         .catch((err) => {
           console.log(err);
@@ -79,7 +80,7 @@ client.on('group_join', async (groupNotification) => {
           recipientIds.toString().split('@')[0]
         },\n\nWelcome to Trackdle. To submit your Wordle score plese click the share button and post directly in the chat.\n\nEnjoy!`
       );
-      Group.find({ groupId: groupNotification.chatId })
+      Group.findOne({ groupId: groupNotification.chatId })
         .then((group) => {
           recipients.forEach((recipient) => {
             group.participants.push({
@@ -117,31 +118,36 @@ client.on('message', async (message) => {
 
     // console.log(chat);
     const values = body.match(
-      /Wordle\s(?<game>\d+)\s(?<score>[1-6]{1})\/6(?:\r?\n){2}(?<attempts>(?:(?:⬜|🟨|⬛|🟩|🟦){5}(?:\r?\n)){0,5}(?:⬜|🟨|⬛|🟩|🟦){5})/
+      /Wordle\s(?<game>\d+)\s(?<score>[1-6X]{1})\/6(?:\r?\n){2}(?<attempts>(?:(?:⬜|🟨|⬛|🟩|🟦){5}(?:\r?\n)){0,5}(?:⬜|🟨|⬛|🟩|🟦){5})/
     );
     if (values) {
       const { game, score, attempts } = values.groups;
       const squares = attempts;
       const scoreObj = {
-        userId,
+        userId: userId.split('@')[0],
         username,
         isGroup,
         groupId,
         groupName,
         gameNumber: parseInt(game),
-        score: parseInt(score),
+        score: score === 'X' ? 0 : (6 - parseInt(score)) + 1,
         squares,
       };
 
-      const scoreExists = await Score.find({groupId, userId, game});
+      const scoreExists = await Score.find({$and: [{groupId}, {userId}, {gameNumber: game}]});
       if(!_.isEmpty(scoreExists)) {
-        message.reply(`${userId}, We've already received your score for this game.`);
+        message.reply(`${userId.split('@')[0]}, We've already received your score for this game.`);
         return;
       }
       const scoreDoc = new Score(scoreObj);
       await scoreDoc.save();
       console.log('saved');
-      message.reply(`Saved ${score}/${game}`);
+      const avgScore = await getAvgScore(groupId);
+      let avgStr = 'All Time Average Score\n\n';
+      avgScore.forEach(s => {
+        avgStr += `${s.userId} | ${s.avgScore}\n`
+      })
+      message.reply(`${userId}, your score for game#${game} has been recorded \n\n ${avgStr}`);
     }
     // message
     //   .getChat()

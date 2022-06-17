@@ -8,7 +8,7 @@ const groupSchema = new mongoose.Schema({
   groupName: {
     type: String,
   },
-  perticipants: [
+  participants: [
     {
       user: {
         type: String,
