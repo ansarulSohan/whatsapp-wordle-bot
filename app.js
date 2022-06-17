@@ -4,6 +4,7 @@ const { connectDB } = require('./db');
 
 const { Score } = require('./models/score');
 const { Group } = require('./models/groups');
+const _ = require('lodash');
 
 // Create an instance of the Client
 const client = new Client({
@@ -131,6 +132,12 @@ client.on('message', async (message) => {
         score: parseInt(score),
         squares,
       };
+
+      const scoreExists = await Score.find({groupId, userId, game});
+      if(!_.isEmpty(scoreExists)) {
+        message.reply(`${userId}, We've already received your score for this game.`);
+        return;
+      }
       const scoreDoc = new Score(scoreObj);
       await scoreDoc.save();
       console.log('saved');
