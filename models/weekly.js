@@ -5,18 +5,24 @@ const weeklySchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  weekStart: {
+    type: Date
+  },
+  weekEnd: {
+    type: Date
+  },
   scores: [
     {
       userId: {
         type: String,
       },
-      gameNumber: {
-        type: Number
-      },
       score: {
         type: Number
       }
-
     }
   ]
-})
+});
+
+const Weekly = mongoose.model('weeklyscore', weeklySchema);
+
+module.exports = {Weekly}

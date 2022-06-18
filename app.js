@@ -1,11 +1,12 @@
 const { Client, LocalAuth, NoAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode-terminal');
 const { connectDB } = require('./db');
+const datefns = require('date-fns');
 
 const { Score } = require('./models/score');
 const { Group } = require('./models/groups');
 const _ = require('lodash');
-const { getAvgScore } = require('./utils/scoreCalculator');
+const { getAvgScore, getWeeklyScore } = require('./utils/scoreCalculator');
 
 // Create an instance of the Client
 const client = new Client({
@@ -37,10 +38,11 @@ client.on('group_join', async (groupNotification) => {
     groupNotification.chatId
   );
   const mappedParticipants = participants.map((x) => {
+    // console.log(x);
     return {
       user: x.id.user,
-      isAdmin: x.id.isAdmin,
-      isSuperAdmin: x.id.isSuperAdmin,
+      isAdmin: x.isAdmin,
+      isSuperAdmin: x.isSuperAdmin,
     };
   });
 
@@ -102,6 +104,8 @@ client.on('group_join', async (groupNotification) => {
 // async function action() {}
 client.on('message', async (message) => {
   try {
+    if(message.body === '!help') {
+    }
     const {
       body,
       _data: { notifyName: username },
@@ -146,6 +150,11 @@ client.on('message', async (message) => {
       let avgStr = 'All Time Average Score\n\n';
       avgScore.forEach(s => {
         avgStr += `${s.userId} | ${s.avgScore}\n`
+      })
+      const weeklyAvg = await getWeeklyScore(groupId);
+      let weeklyStr = `Weekly Average Score(${new Date(datefns.startOfWeek(new Date(), {weekStartsOn: 1})).getDate().toString()} - ${new Date(datefns.endOfWeek(new Date(), {weekStartsOn: 1})).getDate().toString()})\n\n`;
+      weeklyAvg.forEach(s => {
+        weeklyStr += `${s.userId} | ${s.avgScore}\n`
       })
       message.reply(`${userId}, your score for game#${game} has been recorded \n\n ${avgStr}`);
     }

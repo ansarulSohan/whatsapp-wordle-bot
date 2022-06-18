@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/ansarulSohan/whatsapp-wordle-bot#readme",
   "dependencies": {
+    "date-fns": "^2.28.0",
     "lodash": "^4.17.21",
     "mongoose": "^6.3.8",
     "nodemon": "^2.0.16",
