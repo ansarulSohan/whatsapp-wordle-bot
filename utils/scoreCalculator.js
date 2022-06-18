@@ -23,7 +23,7 @@ const getAvgScore = async (groupId) => {
     score = score.map(x => x.score);
     // console.log(score);
     let avgScore = parseInt(parseInt(_.sum(score))/score.length);
-    avgScore ? userAvgScore.push({userId: users[i], avgScore }):{};
+    avgScore ? userAvgScore.push({userId: users[i], avgScore }):userAvgScore.push({userId: users[i], avgScore:0 });
   }
   console.log(userAvgScore);
   userAvgScore = _.chunk(_.orderBy(userAvgScore, ['avgScore'], ['desc']), 3);
@@ -35,4 +35,7 @@ const getAvgScore = async (groupId) => {
 // })();
 
 
+const getWeeklyScore = () => {
+  
+}
 module.exports = { getAvgScore};

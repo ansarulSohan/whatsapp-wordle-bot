@@ -13,6 +13,9 @@ const weeklySchema = new mongoose.Schema({
       gameNumber: {
         type: Number
       },
+      score: {
+        type: Number
+      }
 
     }
   ]
