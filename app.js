@@ -54,7 +54,7 @@ client.on('group_join', async (groupNotification) => {
       //send welcome message
       client.sendMessage(
         groupNotification.chatId,
-        'Hi, I am Trackdle and I will track you Wordle score!!!'
+        'Hi, I am Trackdle and I will track your Wordle score!!!'
       );
 
       //save group to db
@@ -104,7 +104,7 @@ client.on('group_join', async (groupNotification) => {
 // async function action() {}
 client.on('message', async (message) => {
   try {
-    if(message.body === '!help') {
+    if (message.body === '!help') {
     }
     const {
       body,
@@ -134,13 +134,19 @@ client.on('message', async (message) => {
         groupId,
         groupName,
         gameNumber: parseInt(game),
-        score: score === 'X' ? 0 : (6 - parseInt(score)) + 1,
+        score: score === 'X' ? 0 : 6 - parseInt(score),
         squares,
       };
 
-      const scoreExists = await Score.find({$and: [{groupId}, {userId}, {gameNumber: game}]});
-      if(!_.isEmpty(scoreExists)) {
-        message.reply(`${userId.split('@')[0]}, We've already received your score for this game.`);
+      const scoreExists = await Score.find({
+        $and: [{ groupId }, { userId }, { gameNumber: game }],
+      });
+      if (!_.isEmpty(scoreExists)) {
+        message.reply(
+          `${
+            userId.split('@')[0]
+          }, We've already received your score for this game.`
+        );
         return;
       }
       const scoreDoc = new Score(scoreObj);
@@ -148,15 +154,25 @@ client.on('message', async (message) => {
       console.log('saved');
       const avgScore = await getAvgScore(groupId);
       let avgStr = 'All Time Average Score\n\n';
-      avgScore.forEach(s => {
-        avgStr += `${s.userId} | ${s.avgScore}\n`
-      })
+      avgScore.forEach((s) => {
+        if (s.userId !== client.info.me.user)
+          avgStr += `${s.userId} | ${s.avgScore}\n`;
+      });
       const weeklyAvg = await getWeeklyScore(groupId);
-      let weeklyStr = `Weekly Average Score(${new Date(datefns.startOfWeek(new Date(), {weekStartsOn: 1})).getDate().toString()} - ${new Date(datefns.endOfWeek(new Date(), {weekStartsOn: 1})).getDate().toString()})\n\n`;
-      weeklyAvg.forEach(s => {
-        weeklyStr += `${s.userId} | ${s.avgScore}\n`
-      })
-      message.reply(`${userId}, your score for game#${game} has been recorded \n\n ${avgStr}`);
+      let weeklyStr = `Weekly Average Score(${datefns.format(
+        new Date(datefns.startOfWeek(new Date(), { weekStartsOn: 1 })),
+        'ccc PPP'
+      )} - ${datefns.format(
+        new Date(datefns.endOfWeek(new Date(), { weekStartsOn: 1 })),
+        'ccc PPP'
+      )})\n\n`;
+      weeklyAvg.forEach((s) => {
+        if (s.userId !== client.info.me.user)
+          weeklyStr += `${s.userId} | ${s.score}\n`;
+      });
+      message.reply(
+        `${userId}, your score for game#${game} has been recorded \n\n ${avgStr} ${weeklyStr}`
+      );
     }
     // message
     //   .getChat()

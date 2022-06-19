@@ -1,15 +1,15 @@
-const mongoose = require('mongoose'); 
+const mongoose = require('mongoose');
 
 const weeklySchema = new mongoose.Schema({
   groupId: {
-    type: Number,
-    required: true
+    type: String,
+    required: true,
   },
   weekStart: {
-    type: Date
+    type: Date,
   },
   weekEnd: {
-    type: Date
+    type: Date,
   },
   scores: [
     {
@@ -17,12 +17,12 @@ const weeklySchema = new mongoose.Schema({
         type: String,
       },
       score: {
-        type: Number
-      }
-    }
-  ]
+        type: Number,
+      },
+    },
+  ],
 });
 
 const Weekly = mongoose.model('weeklyscore', weeklySchema);
 
-module.exports = {Weekly}
+module.exports = { Weekly };
