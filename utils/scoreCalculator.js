@@ -11,7 +11,7 @@ const getAvgScore = async (groupId) => {
   const { participants } = await Group.findOne({ groupId }).select(
     'participants.user'
   );
-  console.log({ participants });
+  // console.log({ participants });
   const users = participants.map((x) => x.user);
   let userAvgScore = [];
   // console.log(score);
@@ -32,7 +32,7 @@ const getAvgScore = async (groupId) => {
       ? userAvgScore.push({ userId: users[i], avgScore })
       : userAvgScore.push({ userId: users[i], avgScore: 0 });
   }
-  console.log(userAvgScore);
+  // console.log(userAvgScore);
   userAvgScore = _.chunk(_.orderBy(userAvgScore, ['avgScore'], ['desc']), 3);
   // console.log(userAvgScore[0]);
   return userAvgScore[0];
@@ -63,9 +63,9 @@ const getWeeklyScore = async (groupId) => {
       $lt: weekEnd,
     },
   }).select(' userId score');
-  console.log('*******');
-  console.log(allScore);
-  console.log('*******');
+  // console.log('*******');
+  // console.log(allScore);
+  // console.log('*******');
   for (let i = 0; i < users.length; i++) {
     // console.log(score);
     let score = allScore.filter((x) => x.userId === users[i]);
@@ -97,13 +97,13 @@ const getWeeklyScore = async (groupId) => {
     });
     await newData.save();
   }
-  console.log(userweeklyAvgScore);
+  // console.log(userweeklyAvgScore);
   userweeklyAvgScore = _.orderBy(
     userweeklyAvgScore,
     ['weeklyAvgScore'],
     ['desc']
   );
-  console.log(userweeklyAvgScore);
+  // console.log(userweeklyAvgScore);
   return userweeklyAvgScore;
 };
 module.exports = { getAvgScore, getWeeklyScore };

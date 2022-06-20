@@ -31,6 +31,7 @@ client.on('authenticated', () => {
 client.on('ready', () => {
   connectDB();
   console.log('Client is ready');
+  console.log(`running ${client.info.me.user} as Bot`);
 });
 
 // When someone is added to the group
@@ -157,7 +158,7 @@ client.on('message', async (message) => {
       await scoreDoc.save();
       console.log('saved');
       const avgScore = await getAvgScore(groupId);
-      let avgStr = 'All Time Average Score\n\n';
+      let avgStr = 'All Time Average Score\n';
       avgScore.forEach((s) => {
         if (s.userId !== client.info.me.user)
           avgStr += `${s.userId} | ${s.avgScore}\n`;
@@ -169,13 +170,23 @@ client.on('message', async (message) => {
       )} - ${datefns.format(
         new Date(datefns.endOfWeek(new Date(), { weekStartsOn: 1 })),
         'ccc PPP'
-      )})\n\n`;
+      )})\n`;
       weeklyAvg.forEach((s) => {
         if (s.userId !== client.info.me.user)
           weeklyStr += `${s.userId} | ${s.score}\n`;
       });
+
+      //log the message
+      console.log(
+        `${
+          userId.split('@')[0]
+        }, your score for game#${game} has been recorded \n\n ${avgStr} \n ${weeklyStr}`
+      );
+
       message.reply(
-        `${userId}, your score for game#${game} has been recorded \n\n ${avgStr} ${weeklyStr}`
+        `${
+          userId.split('@')[0]
+        }, your score for game#${game} has been recorded \n\n ${avgStr} \n ${weeklyStr}`
       );
     }
     // message
