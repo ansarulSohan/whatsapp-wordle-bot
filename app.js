@@ -180,13 +180,13 @@ client.on('message', async (message) => {
       console.log(
         `${
           userId.split('@')[0]
-        }, your score for game#${game} has been recorded \n\n ${avgStr} \n ${weeklyStr}`
+        }, your score for game#${game} has been recorded \n\n${avgStr} \n${weeklyStr}`
       );
 
       message.reply(
         `${
           userId.split('@')[0]
-        }, your score for game#${game} has been recorded \n\n ${avgStr} \n ${weeklyStr}`
+        }, your score for game#${game} has been recorded \n\n${avgStr} \n${weeklyStr}`
       );
     }
     // message
