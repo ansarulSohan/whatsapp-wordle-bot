@@ -10,6 +10,10 @@ const { getAvgScore, getWeeklyScore } = require('./utils/scoreCalculator');
 
 // Create an instance of the Client
 const client = new Client({
+  puppeteer: {
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-extensions'],
+  },
   authStrategy: new LocalAuth(),
 });
 
@@ -108,7 +112,7 @@ client.on('message', async (message) => {
     }
     const {
       body,
-      _data: { notifyName: username },
+      _data: { notifyName: git },
     } = message;
     const chat = await message.getChat();
     const { isGroup, id } = chat;
