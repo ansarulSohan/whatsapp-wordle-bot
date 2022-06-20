@@ -112,7 +112,7 @@ client.on('message', async (message) => {
     }
     const {
       body,
-      _data: { notifyName: git },
+      _data: { notifyName: username },
     } = message;
     const chat = await message.getChat();
     const { isGroup, id } = chat;
