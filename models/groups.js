@@ -14,6 +14,9 @@ const groupSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
+      _serialized: {
+        type: String,
+      },
       isAdmin: {
         type: Boolean,
         required: true,

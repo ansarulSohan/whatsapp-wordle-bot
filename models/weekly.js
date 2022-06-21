@@ -16,6 +16,9 @@ const weeklySchema = new mongoose.Schema({
       userId: {
         type: String,
       },
+      _serialized: {
+        type: String,
+      },
       score: {
         type: Number,
       },

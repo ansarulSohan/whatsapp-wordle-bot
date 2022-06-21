@@ -6,101 +6,148 @@ const datefns = require('date-fns');
 const { Weekly } = require('../models/weekly');
 connectDB();
 
+/**
+ *
+ * @function getAvgScore(groupId)
+ * @param {String} groupId
+ * @returns {Promise<Array>} userId, _serialized, avgScore
+ */
 const getAvgScore = async (groupId) => {
-  console.log(groupId);
-  const { participants } = await Group.findOne({ groupId }).select(
-    'participants.user'
-  );
-  // console.log({ participants });
-  const users = participants.map((x) => x.user);
-  let userAvgScore = [];
-  // console.log(score);
-  // score = score.map(x => {return {score: x.score, userId: x.userId}});
-  let allScore = await Score.find({ userId: { $in: users } }).select(
-    ' userId score'
-  );
-  for (let i = 0; i < users.length; i++) {
-    // console.log(score);
-    let score = allScore.filter((x) => x.userId === users[i]);
-    console.log(score);
-    // console.log(score);
-    // score = score.map(x => {return {score: x.score, userId: x.userId}});
-    score = score.map((x) => x.score);
-    // console.log(score);
-    let avgScore = parseInt(parseInt(_.sum(score)) / score.length);
-    avgScore
-      ? userAvgScore.push({ userId: users[i], avgScore })
-      : userAvgScore.push({ userId: users[i], avgScore: 0 });
+  try {
+    // Get all participants of the group.
+    const { participants } = await Group.findOne({ groupId }).select(
+      'participants.user participants._serialized'
+    );
+
+    // map all users and _serialized id to two different arrays.
+    const users = participants.map((x) => x.user);
+    const _serialized = participants.map((x) => x._serialized);
+
+    // Array of calculated scores, initialized.
+    let userAvgScore = [];
+
+    // Find all scored of the group from db.
+    let allScore = await Score.find({ userId: { $in: users } }).select(
+      ' userId score'
+    ); // only select userId and score
+
+    // Loop through the returned collections
+    for (let i = 0; i < users.length; i++) {
+      // Filter all scores of an individual
+      let score = allScore.filter((x) => x.userId === users[i]);
+
+      // Map only the score
+      score = score.map((x) => x.score);
+
+      // calculate the average
+      let avgScore = parseInt(parseInt(_.sum(score)) / score.length);
+
+      // If score is nan, push 0 as score, else push the average
+      !_.isNaN(avgScore)
+        ? userAvgScore.push({
+            userId: users[i],
+            _serialized: _serialized[i],
+            avgScore,
+          })
+        : userAvgScore.push({
+            userId: users[i],
+            _serialized: _serialized[i],
+            avgScore: 0,
+          });
+    }
+    // sort the array in descending order according to the avgScore.
+    userAvgScore = _.orderBy(userAvgScore, ['avgScore'], ['desc']);
+    console.log('loggin weekly score\n', userAvgScore, '\n********');
+    return Promise.resolve(userAvgScore);
+  } catch (error) {
+    return Promise.reject(error);
   }
-  // console.log(userAvgScore);
-  userAvgScore = _.orderBy(userAvgScore, ['avgScore'], ['desc']);
-  // console.log(userAvgScore[0]);
-  return userAvgScore;
 };
 
+/**
+ * @function getWeeklyScore(groupId)
+ * @param {String} groupId
+ * @returns {Promise<Array>} userId, _serialized, score
+ */
 const getWeeklyScore = async (groupId) => {
-  const weekStart = new Date(
-    datefns.startOfWeek(new Date(), { weekStartsOn: 1 })
-  );
+  try {
+    //calculate weekStart
+    const weekStart = new Date(
+      datefns.startOfWeek(new Date(), { weekStartsOn: 1 })
+    );
 
-  const weekEnd = new Date(datefns.endOfWeek(new Date(), { weekStartsOn: 1 }));
-  console.log(groupId);
-  const { participants } = await Group.findOne({ groupId }).select(
-    'participants.user'
-  );
-  console.log({ participants });
-  const users = participants.map((x) => x.user);
-  let userweeklyAvgScore = [];
-  // console.log(score);
-  // score = score.map(x => {return {score: x.score, userId: x.userId}});
-  let allScore = await Score.find({
-    userId: { $in: users },
-    date: {
-      $gte: weekStart,
-      $lt: weekEnd,
-    },
-  }).select(' userId score');
-  // console.log('*******');
-  // console.log(allScore);
-  // console.log('*******');
-  for (let i = 0; i < users.length; i++) {
-    // console.log(score);
-    let score = allScore.filter((x) => x.userId === users[i]);
-    console.log(score);
-    // console.log(score);
-    // score = score.map(x => {return {score: x.score, userId: x.userId}});
-    score = score.map((x) => x.score);
-    // console.log(score);
-    let weeklyAvgScore = parseInt(parseInt(_.sum(score)) / score.length);
-    weeklyAvgScore
-      ? userweeklyAvgScore.push({ userId: users[i], score: weeklyAvgScore })
-      : userweeklyAvgScore.push({ userId: users[i], score: 0 });
-  }
+    //Calculate weekend
+    const weekEnd = new Date(
+      datefns.endOfWeek(new Date(), { weekStartsOn: 1 })
+    );
 
-  const weeklyScoreFromDb = await Weekly.findOne({
-    groupId,
-    weekStart: { $gte: weekStart },
-    weekEnd: { $lt: weekEnd },
-  });
-  if (weeklyScoreFromDb) {
-    weeklyScoreFromDb.scores = [...userweeklyAvgScore];
-    await weeklyScoreFromDb.save();
-  } else {
-    const newData = new Weekly({
+    // Get all participants of the group.
+    const { participants } = await Group.findOne({ groupId }).select(
+      'participants.user participants._serialized'
+    );
+
+    // map all users and _serialized id to two different arrays.
+    const users = participants.map((x) => x.user);
+    const _serialized = participants.map((x) => x._serialized);
+
+    // Array of calculated scores, initialized.
+    let userweeklyAvgScore = [];
+
+    // Find all scored of the group from db within date range.
+    let allScore = await Score.find({
+      userId: { $in: users },
+      date: {
+        $gte: weekStart,
+        $lt: weekEnd,
+      },
+    }).select(' userId score'); // only select userId and score
+
+    // Loop through the returned collections
+    for (let i = 0; i < users.length; i++) {
+      // Filter all scores of an individual
+      let score = allScore.filter((x) => x.userId === users[i]);
+
+      // Map only the score
+      score = score.map((x) => x.score);
+
+      // calculate the weekly average
+      let weeklyAvgScore = parseInt(parseInt(_.sum(score)) / score.length);
+      // If score is nan, push 0 as score, else push the average
+      !_.isNaN(weeklyAvgScore)
+        ? userweeklyAvgScore.push({ userId: users[i], score: weeklyAvgScore })
+        : userweeklyAvgScore.push({ userId: users[i], score: 0 });
+    }
+
+    // Check if the group info already exists
+    const weeklyScoreFromDb = await Weekly.findOne({
       groupId,
-      weekStart,
-      weekEnd,
-      scores: [...userweeklyAvgScore],
+      weekStart: { $gte: weekStart },
+      weekEnd: { $lt: weekEnd },
     });
-    await newData.save();
+
+    // if Exists
+    if (weeklyScoreFromDb) {
+      // Update database
+      weeklyScoreFromDb.scores = [...userweeklyAvgScore];
+      await weeklyScoreFromDb.save();
+    } else {
+      // Else, save a new Entry
+      const newData = new Weekly({
+        groupId,
+        weekStart,
+        weekEnd,
+        scores: [...userweeklyAvgScore],
+      });
+      await newData.save();
+    }
+
+    // Order the returning array in descending order
+    userweeklyAvgScore = _.orderBy(userweeklyAvgScore, ['score'], ['desc']);
+    console.log('loggin weekly score\n', userweeklyAvgScore, '\n********');
+    return Promise.resolve(userweeklyAvgScore);
+  } catch (error) {
+    return Promise.reject(error);
   }
-  // console.log(userweeklyAvgScore);
-  userweeklyAvgScore = _.orderBy(
-    userweeklyAvgScore,
-    ['weeklyAvgScore'],
-    ['desc']
-  );
-  // console.log(userweeklyAvgScore);
-  return userweeklyAvgScore;
 };
+
 module.exports = { getAvgScore, getWeeklyScore };

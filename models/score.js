@@ -5,6 +5,9 @@ const scoreSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  _serialized: {
+    type: String,
+  },
   username: {
     type: String,
   },
@@ -20,7 +23,7 @@ const scoreSchema = new mongoose.Schema({
     },
   },
   groupName: {
-    type: String
+    type: String,
   },
   gameNumber: {
     type: Number,
@@ -36,8 +39,8 @@ const scoreSchema = new mongoose.Schema({
   },
   date: {
     type: Date,
-    default: Date.now
-  }
+    default: Date.now,
+  },
 });
 
 const Score = mongoose.model('score', scoreSchema);

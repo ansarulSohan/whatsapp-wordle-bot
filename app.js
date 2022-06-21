@@ -46,6 +46,7 @@ client.on('group_join', async (groupNotification) => {
     // console.log(x);
     return {
       user: x.id.user,
+      _serialized: x.id._serialized,
       isAdmin: x.isAdmin,
       isSuperAdmin: x.isSuperAdmin,
     };
@@ -92,6 +93,7 @@ client.on('group_join', async (groupNotification) => {
           recipients.forEach((recipient) => {
             group.participants.push({
               user: recipient.id.user,
+              _serialized: recipient.id._serialized,
               isAdmin: recipient.id.isAdmin,
               isSuperAdmin: recipient.id.isSuperAdmin,
             });
@@ -106,10 +108,16 @@ client.on('group_join', async (groupNotification) => {
   });
 });
 
-// async function action() {}
+// On message received
 client.on('message', async (message) => {
   try {
     if (message.body === '!help') {
+      message.reply(
+        '!ping - pong\n!leaderboard - score leaderboard\n!help - get help to use the bot'
+      );
+    }
+    if (message.body === '!ping') {
+      message.reply('pong');
     }
     const {
       body,
@@ -117,9 +125,15 @@ client.on('message', async (message) => {
     } = message;
     const chat = await message.getChat();
     const { isGroup, id } = chat;
-    const userId = isGroup ? message.author : chat.id.user;
+    const userId = isGroup ? message.author.split('@')[0] : chat.id.user;
     const groupId = isGroup ? id._serialized : null;
     const groupName = isGroup ? chat.name : null;
+    const contact = await message.getContact();
+    console.log(contact);
+    const {
+      id: { _serialized },
+    } = contact;
+    console.log(_serialized);
 
     // Match to regex to check if the message is a wordle score
     const values = body.match(
@@ -131,6 +145,7 @@ client.on('message', async (message) => {
       const scoreObj = {
         userId: userId,
         username,
+        _serialized,
         isGroup,
         groupId,
         groupName,
@@ -147,8 +162,9 @@ client.on('message', async (message) => {
       if (!_.isEmpty(scoreExists)) {
         console.log('score exists');
         console.log(scoreExists);
-        message.reply(
-          `@${userId}, We've already received your score for this game.`
+        chat.sendMessage(
+          `@${userId}, We've already received your score for this game.`,
+          { mentions: [contact] }
         );
         return;
       }
@@ -158,9 +174,13 @@ client.on('message', async (message) => {
       console.log('saved');
       const avgScore = await getAvgScore(groupId);
       let avgStr = 'All Time Average\n';
-      avgScore.forEach((s) => {
-        if (s.userId !== client.info.me.user)
-          avgStr += `${s.userId} | ${s.avgScore}\n`;
+      const mentions = [];
+      avgScore.forEach(async (s) => {
+        if (s.userId !== client.info.me.user) {
+          let c = await client.getContactById(s._serialized);
+          mentions.push(c);
+          avgStr += `@${s.userId} | ${s.avgScore}\n`;
+        }
       });
       const weeklyAvg = await getWeeklyScore(groupId);
       let weeklyStr = `Weekly Competition\n${datefns.format(
@@ -171,8 +191,8 @@ client.on('message', async (message) => {
         'ccc PPP'
       )}\n`;
       weeklyAvg.forEach((s) => {
-        if (s.userId !== client.info.me.user)
-          weeklyStr += `${s.userId} | ${s.score}\n`;
+        if (s.userId !== client.info.wid.user)
+          weeklyStr += `@${s.userId} | ${s.score}\n`;
       });
 
       //log the message
@@ -180,8 +200,9 @@ client.on('message', async (message) => {
         `${userId}, your score for game# ${game} has been recorded \n\n${avgStr} \n${weeklyStr}`
       );
 
-      message.reply(
-        `${userId}, your score for game# ${game} has been recorded \n\n${avgStr} \n${weeklyStr}`
+      chat.sendMessage(
+        `@${userId}, your score for game# ${game} has been recorded \n\n${avgStr} \n${weeklyStr}`,
+        { mentions }
       );
     }
     // message
