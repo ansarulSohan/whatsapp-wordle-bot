@@ -157,11 +157,8 @@ client.on('message', async (message) => {
       const scoreExists = await Score.find({
         $and: [{ groupId }, { userId }, { gameNumber: game }],
       });
-      console.log('score does not exist');
-      console.log(scoreExists);
       if (!_.isEmpty(scoreExists)) {
         console.log('score exists');
-        console.log(scoreExists);
         chat.sendMessage(
           `@${userId}, We've already received your score for this game.`,
           { mentions: [contact] }
