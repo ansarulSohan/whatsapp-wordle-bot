@@ -33,13 +33,10 @@ const getAvgScore = async (groupId) => {
       : userAvgScore.push({ userId: users[i], avgScore: 0 });
   }
   // console.log(userAvgScore);
-  userAvgScore = _.chunk(_.orderBy(userAvgScore, ['avgScore'], ['desc']), 3);
+  userAvgScore = _.orderBy(userAvgScore, ['avgScore'], ['desc']);
   // console.log(userAvgScore[0]);
-  return userAvgScore[0];
+  return userAvgScore;
 };
-// ;(async() => {
-//   await avgCalculator('120363023814250177@g.us');
-// })();
 
 const getWeeklyScore = async (groupId) => {
   const weekStart = new Date(
@@ -47,7 +44,7 @@ const getWeeklyScore = async (groupId) => {
   );
 
   const weekEnd = new Date(datefns.endOfWeek(new Date(), { weekStartsOn: 1 }));
-  console.log(weekStart, weekEnd);
+  console.log(groupId);
   const { participants } = await Group.findOne({ groupId }).select(
     'participants.user'
   );

@@ -83,7 +83,7 @@ client.on('group_join', async (groupNotification) => {
       // else, send welcome message mentionaing the user
       client.sendMessage(
         groupNotification.chatId,
-        `Hi ${
+        `Hi @${
           recipientIds.toString().split('@')[0]
         },\n\nWelcome to Trackdle. To submit your Wordle score plese click the share button and post directly in the chat.\n\nEnjoy!`
       );
@@ -117,15 +117,11 @@ client.on('message', async (message) => {
     } = message;
     const chat = await message.getChat();
     const { isGroup, id } = chat;
-    const userId = isGroup ? message.author : chat.id._serialized;
+    const userId = isGroup ? message.author : chat.id.user;
     const groupId = isGroup ? id._serialized : null;
     const groupName = isGroup ? chat.name : null;
-    // console.log(body, username, isGroup, userId, groupId);
-    // console.log('*********');
-    // console.log(message);
-    // console.log('------------');
 
-    // console.log(chat);
+    // Match to regex to check if the message is a wordle score
     const values = body.match(
       /Wordle\s(?<game>\d+)\s(?<score>[1-6X]{1})\/6(?:\r?\n){2}(?<attempts>(?:(?:⬜|🟨|⬛|🟩|🟦){5}(?:\r?\n)){0,5}(?:⬜|🟨|⬛|🟩|🟦){5})/
     );
@@ -133,44 +129,47 @@ client.on('message', async (message) => {
       const { game, score, attempts } = values.groups;
       const squares = attempts;
       const scoreObj = {
-        userId: userId.split('@')[0],
+        userId: userId,
         username,
         isGroup,
         groupId,
         groupName,
         gameNumber: parseInt(game),
-        score: score === 'X' ? 0 : 6 - parseInt(score),
+        score: score === 'X' ? 0 : 7 - parseInt(score),
         squares,
       };
 
       const scoreExists = await Score.find({
         $and: [{ groupId }, { userId }, { gameNumber: game }],
       });
+      console.log('score does not exist');
+      console.log(scoreExists);
       if (!_.isEmpty(scoreExists)) {
+        console.log('score exists');
+        console.log(scoreExists);
         message.reply(
-          `${
-            userId.split('@')[0]
-          }, We've already received your score for this game.`
+          `@${userId}, We've already received your score for this game.`
         );
         return;
       }
+      console.log('Score saved');
       const scoreDoc = new Score(scoreObj);
       await scoreDoc.save();
       console.log('saved');
       const avgScore = await getAvgScore(groupId);
-      let avgStr = 'All Time Average Score\n';
+      let avgStr = 'All Time Average\n';
       avgScore.forEach((s) => {
         if (s.userId !== client.info.me.user)
           avgStr += `${s.userId} | ${s.avgScore}\n`;
       });
       const weeklyAvg = await getWeeklyScore(groupId);
-      let weeklyStr = `Weekly Average Score(${datefns.format(
+      let weeklyStr = `Weekly Competition\n${datefns.format(
         new Date(datefns.startOfWeek(new Date(), { weekStartsOn: 1 })),
         'ccc PPP'
       )} - ${datefns.format(
         new Date(datefns.endOfWeek(new Date(), { weekStartsOn: 1 })),
         'ccc PPP'
-      )})\n`;
+      )}\n`;
       weeklyAvg.forEach((s) => {
         if (s.userId !== client.info.me.user)
           weeklyStr += `${s.userId} | ${s.score}\n`;
@@ -178,15 +177,11 @@ client.on('message', async (message) => {
 
       //log the message
       console.log(
-        `${
-          userId.split('@')[0]
-        }, your score for game#${game} has been recorded \n\n${avgStr} \n${weeklyStr}`
+        `${userId}, your score for game# ${game} has been recorded \n\n${avgStr} \n${weeklyStr}`
       );
 
       message.reply(
-        `${
-          userId.split('@')[0]
-        }, your score for game#${game} has been recorded \n\n${avgStr} \n${weeklyStr}`
+        `${userId}, your score for game# ${game} has been recorded \n\n${avgStr} \n${weeklyStr}`
       );
     }
     // message
