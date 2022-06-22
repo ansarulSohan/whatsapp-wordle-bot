@@ -52,7 +52,7 @@ client.on('group_join', async (groupNotification) => {
     };
   });
 
-  //Chech if the added user is the bot.
+  //Check if the added user is the bot.
   console.log('recipients', recipientIds);
   recipientIds.forEach((recipientId) => {
     //if bot is added to a group
@@ -107,6 +107,10 @@ client.on('group_join', async (groupNotification) => {
     }
   });
 });
+
+// client.on('group_leave', (groupNotification) => {
+
+// })
 
 // On message received
 client.on('message', async (message) => {
@@ -220,5 +224,5 @@ client.on('message', async (message) => {
   }
 });
 
-// Initate the client
+// Initiate the client
 client.initialize();
