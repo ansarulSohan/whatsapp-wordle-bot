@@ -41,7 +41,7 @@ const getAvgScore = async (groupId) => {
 
       // calculate the average
       let avgScore = score.length
-        ? (_.sum(score) / score.length).toFixed(2)
+        ? parseFloat((_.sum(score) / score.length).toFixed(2))
         : 0;
 
       userAvgScore.push({
