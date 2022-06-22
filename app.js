@@ -53,7 +53,6 @@ client.on('group_join', async (groupNotification) => {
   });
 
   //Check if the added user is the bot.
-  console.log('recipients', recipientIds);
   recipientIds.forEach((recipientId) => {
     //if bot is added to a group
     if (recipientId === user) {
@@ -169,20 +168,19 @@ client.on('message', async (message) => {
         );
         return;
       }
-      console.log('Score saved');
       const scoreDoc = new Score(scoreObj);
       await scoreDoc.save();
       console.log('saved');
       const avgScore = await getAvgScore(groupId);
       let avgStr = 'All Time Average\n';
       const mentions = [];
-      avgScore.forEach(async (s) => {
+      for (const s of avgScore) {
         if (s.userId !== client.info.me.user) {
           let c = await client.getContactById(s._serialized);
           mentions.push(c);
           avgStr += `@${s.userId} | ${s.avgScore}\n`;
         }
-      });
+      }
       const weeklyAvg = await getWeeklyScore(groupId);
       let weeklyStr = `Weekly Competition\n${datefns.format(
         new Date(datefns.startOfWeek(new Date(), { weekStartsOn: 1 })),
