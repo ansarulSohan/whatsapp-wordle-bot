@@ -108,9 +108,7 @@ const getWeeklyScore = async (groupId) => {
       score = score.map((x) => 7 - x.score);
 
       // calculate the weekly average
-      let weeklyAvgScore = !score.length
-        ? 0
-        : parseFloat((_.sum(score) / score.length).toFixed(2));
+      let weeklyAvgScore = _.sum(score);
 
       userweeklyAvgScore.push({ userId: users[i], score: weeklyAvgScore });
     }

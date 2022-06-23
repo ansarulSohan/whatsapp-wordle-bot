@@ -108,3 +108,4 @@ dist
 .wwebjs_auth/session
 ./.wwebjs_auth/session
 wwebjs_auth/
+test.js
