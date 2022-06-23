@@ -4,7 +4,7 @@ const { Score } = require('../models/score');
 const _ = require('lodash');
 const datefns = require('date-fns');
 const { Weekly } = require('../models/weekly');
-connectDB();
+// connectDB();
 
 /**
  *
@@ -147,11 +147,11 @@ const getWeeklyScore = async (groupId) => {
   }
 };
 
-(async () => {
-  const allTime = await getAvgScore('120363026841352920@g.us');
-  const weekly = await getWeeklyScore('120363026841352920@g.us');
-  console.log(allTime);
-  console.log(weekly);
-  return;
-})();
+// (async () => {
+//   const allTime = await getAvgScore('120363026841352920@g.us');
+//   const weekly = await getWeeklyScore('120363026841352920@g.us');
+//   console.log(allTime);
+//   console.log(weekly);
+//   return;
+// })();
 module.exports = { getAvgScore, getWeeklyScore };
