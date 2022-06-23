@@ -14,6 +14,7 @@ const { Weekly } = require('../models/weekly');
  */
 const getAvgScore = async (groupId) => {
   try {
+    console.log('Group ID: ', groupId);
     // Get all participants of the group.
     const { participants } = await Group.findOne({ groupId }).select(
       'participants.user participants._serialized'
@@ -27,7 +28,7 @@ const getAvgScore = async (groupId) => {
     let userAvgScore = [];
 
     // Find all scored of the group from db.
-    let allScore = await Score.find({ userId: { $in: users } }).select(
+    let allScore = await Score.find({ groupId, userId: { $in: users } }).select(
       ' userId score'
     ); // only select userId and score
 
@@ -90,6 +91,7 @@ const getWeeklyScore = async (groupId) => {
 
     // Find all scored of the group from db within date range.
     let allScore = await Score.find({
+      groupId,
       userId: { $in: users },
       date: {
         $gte: weekStart,
