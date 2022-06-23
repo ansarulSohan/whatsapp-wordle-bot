@@ -5,10 +5,13 @@ const mongoose = require('mongoose');
  */
 const connectDB = () => {
   try {
-    mongoose.connect('mongodb://localhost:27017/wordle-bot', {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    mongoose.connect(
+      'mongodb://myUserAdmin:2PtaBc1232tP@localhost:27017/wordle-bot',
+      {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+      }
+    );
     const db = mongoose.connection;
     db.once('connected', () => console.log('DB is connected'));
   } catch (err) {
