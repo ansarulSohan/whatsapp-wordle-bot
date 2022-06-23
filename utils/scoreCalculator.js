@@ -52,7 +52,7 @@ const getAvgScore = async (groupId) => {
     }
     // sort the array in descending order according to the avgScore.
     userAvgScore = _.orderBy(userAvgScore, ['avgScore'], ['desc']);
-    console.log('loggin weekly score\n', userAvgScore, '\n********');
+    // console.log('loggin weekly score\n', userAvgScore, '\n********');
     return Promise.resolve(userAvgScore);
   } catch (error) {
     return Promise.reject(error);
@@ -103,7 +103,7 @@ const getWeeklyScore = async (groupId) => {
       let score = allScore.filter((x) => x.userId === users[i]);
 
       // Map only the score
-      score = score.map((x) => x.score);
+      score = score.map((x) => 7 - x.score);
 
       // calculate the weekly average
       let weeklyAvgScore = !score.length
@@ -140,7 +140,7 @@ const getWeeklyScore = async (groupId) => {
 
     // Order the returning array in descending order
     userweeklyAvgScore = _.orderBy(userweeklyAvgScore, ['score'], ['desc']);
-    console.log('loggin weekly score\n', userweeklyAvgScore, '\n********');
+    // console.log('loggin weekly score\n', userweeklyAvgScore, '\n********');
     return Promise.resolve(userweeklyAvgScore);
   } catch (error) {
     return Promise.reject(error);

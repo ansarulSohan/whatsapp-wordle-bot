@@ -153,7 +153,7 @@ client.on('message', async (message) => {
         groupId,
         groupName,
         gameNumber: parseInt(game),
-        score: score === 'X' ? 0 : 7 - parseInt(score),
+        score: score === 'X' ? 7 : parseInt(score),
         squares,
       };
 
