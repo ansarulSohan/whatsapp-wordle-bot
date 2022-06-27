@@ -11,6 +11,12 @@ const weeklySchema = new mongoose.Schema({
   weekEnd: {
     type: Date,
   },
+  firstGameNumber: {
+    type: Number,
+  },
+  lastGameNumber: {
+    type: Number,
+  },
   scores: [
     {
       userId: {

@@ -181,14 +181,12 @@ client.on('message', async (message) => {
           avgStr += `@${s.userId} | ${s.avgScore}\n`;
         }
       }
-      const weeklyAvg = await getWeeklyScore(groupId);
-      let weeklyStr = `Weekly Competition\n${datefns.format(
-        new Date(datefns.startOfWeek(new Date(), { weekStartsOn: 1 })),
-        'ccc PPP'
-      )} - ${datefns.format(
-        new Date(datefns.endOfWeek(new Date(), { weekStartsOn: 1 })),
-        'ccc PPP'
-      )}\n`;
+      const {
+        userweeklyAvgScore: weeklyAvg,
+        firstGameNumber,
+        lastGameNumber,
+      } = await getWeeklyScore(groupId);
+      let weeklyStr = `Weekly Competition\n# ${firstGameNumber} - # ${lastGameNumber}\n`;
       weeklyAvg.forEach((s) => {
         if (s.userId !== client.info.wid.user)
           weeklyStr += `@${s.userId} | ${s.score}\n`;

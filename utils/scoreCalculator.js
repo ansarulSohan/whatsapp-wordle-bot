@@ -6,6 +6,52 @@ const datefns = require('date-fns');
 const { Weekly } = require('../models/weekly');
 // connectDB();
 
+// /**
+//  * @function getWeeklyGameNumber(date)
+//  * @param {Date=} date
+//  * @returns {Object<Number>} {firstGameNumber, lastGameNumber}
+//  * @description Returns the current week's start and end game number.
+//  * @example getWeeklyGameNumber();
+//  * // returns { firstGameNumber: 1, lastGameNumber: 7 }
+//  * @example getWeeklyGameNumber(new Date('2020-06-19'));
+//  * // returns { firstGameNumber: 201, lastGameNumber: 207 }
+//  */
+
+// const getWeeklyGameNumber = (date) => {
+//   const today = new Date() || date;
+//   const wordleStartingDate = new Date('June 19, 2021');
+//   const weekStartsOn = datefns.startOfWeek(today, { weekStartsOn: 1 }); // Get start of week
+//   const weekEndsOn = datefns.endOfWeek(today, { weekStartsOn: 1 }); // Get end of week
+//   const oneDay = 1000 * 60 * 60 * 24; // Miliiseconds * Seconds * Minutes * Hours = 1 day
+
+//   const firstGameNumber = datefns.differenceInDays(
+//     weekStartsOn,
+//     wordleStartingDate
+//   );
+//   const lastGameNumber = datefns.differenceInCalendarDays(
+//     weekEndsOn,
+//     wordleStartingDate
+//   );
+//   return { firstGameNumber, lastGameNumber };
+// };
+
+/**
+ * @function getWeekLyGameNumber(gameNumber)
+ * @param {Number} gameNumber
+ * @returns {Object<Number>} {firstGameNumber, lastGameNumber}
+ * @description Returns the current week's start and end game number.
+ * @example getWeeklyGameNumber(375);
+ * //returns { firstGameNumber: 373, lastGameNumber: 379 }
+ */
+
+const getWeeklyGameNumber = (gameNumber) => {
+  const firstGameNumber = gameNumber - (gameNumber % 7) + 2;
+  const lastGameNumber = firstGameNumber + 6;
+  return { firstGameNumber, lastGameNumber };
+};
+
+// getWeeklyGameNumber()
+
 /**
  *
  * @function getAvgScore(groupId)
@@ -61,21 +107,32 @@ const getAvgScore = async (groupId) => {
 };
 
 /**
- * @function getWeeklyScore(groupId)
+ * @function getWeekStartAndEnd(date)
+ * @param {Date=} date
+ * @returns {Object<Date>} {weekStart, weekEnd}
+ * @description Returns the start and end date of the current week.
+ * @example getWeekStartAndEnd();
+ * // returns { weekStart: 2020-06-19, weekEnd: 2020-06-25 }
+ * @example getWeekStartAndEnd(new Date('2020-06-19'));
+ * // returns { weekStart: 2020-06-19, weekEnd: 2020-06-25 }
+ */
+
+function getWeekStartAndEnd(date) {
+  const today = new Date() || date; // Get current date if not provided
+  const weekStartsOn = datefns.startOfWeek(today, { weekStartsOn: 1 }); // Get start of week
+  const weekEndsOn = datefns.endOfWeek(today, { weekStartsOn: 1 }); // Get end of week
+  return { weekStart: weekStartsOn, weekEnd: weekEndsOn };
+}
+
+/**
+ * @function getWeeklyScore()
  * @param {String} groupId
+ * @param {Number} gameNumber
  * @returns {Promise<Array>} userId, _serialized, score
  */
-const getWeeklyScore = async (groupId) => {
+const getWeeklyScore = async (groupId, gameNumber) => {
   try {
-    //calculate weekStart
-    const weekStart = new Date(
-      datefns.startOfWeek(new Date(), { weekStartsOn: 1 })
-    );
-
-    //Calculate weekend
-    const weekEnd = new Date(
-      datefns.endOfWeek(new Date(), { weekStartsOn: 1 })
-    );
+    const { weekStart, weekEnd } = getWeekStartAndEnd();
 
     // Get all participants of the group.
     const { participants } = await Group.findOne({ groupId }).select(
@@ -93,10 +150,8 @@ const getWeeklyScore = async (groupId) => {
     let allScore = await Score.find({
       groupId,
       userId: { $in: users },
-      date: {
-        $gte: weekStart,
-        $lt: weekEnd,
-      },
+      firstGameNumber: { $gte: gameNumber - 7 },
+      lastGameNumber: { $lte: gameNumber + 7 },
     }).select(' userId score'); // only select userId and score
 
     // Loop through the returned collections
@@ -116,8 +171,8 @@ const getWeeklyScore = async (groupId) => {
     // Check if the group info already exists
     const weeklyScoreFromDb = await Weekly.findOne({
       groupId,
-      weekStart: { $gte: weekStart },
-      weekEnd: { $lte: weekEnd },
+      firstGameNumber: { $gte: gameNumber - 7 },
+      lastGameNumber: { $lte: gameNumber + 7 },
     });
 
     // if Exists
@@ -129,6 +184,8 @@ const getWeeklyScore = async (groupId) => {
       );
     } else {
       // Else, save a new Entry
+      const { firstGameNumber, lastGameNumber } =
+        getWeeklyGameNumber(gameNumber);
       const newData = new Weekly({
         groupId,
         weekStart,
@@ -141,7 +198,11 @@ const getWeeklyScore = async (groupId) => {
     // Order the returning array in descending order
     userweeklyAvgScore = _.orderBy(userweeklyAvgScore, ['score'], ['desc']);
     // console.log('loggin weekly score\n', userweeklyAvgScore, '\n********');
-    return Promise.resolve(userweeklyAvgScore);
+    return Promise.resolve({
+      userweeklyAvgScore,
+      firstGameNumber,
+      lastGameNumber,
+    });
   } catch (error) {
     return Promise.reject(error);
   }
@@ -154,4 +215,4 @@ const getWeeklyScore = async (groupId) => {
 //   console.log(weekly);
 //   return;
 // })();
-module.exports = { getAvgScore, getWeeklyScore };
+module.exports = { getAvgScore, getWeeklyScore, getWeeklyGameNumber };
