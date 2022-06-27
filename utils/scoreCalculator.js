@@ -98,7 +98,7 @@ const getAvgScore = async (groupId) => {
       });
     }
     // sort the array in descending order according to the avgScore.
-    userAvgScore = _.orderBy(userAvgScore, ['avgScore'], ['desc']);
+    userAvgScore = _.orderBy(userAvgScore, ['avgScore'], ['asc']);
     // console.log('loggin weekly score\n', userAvgScore, '\n********');
     return Promise.resolve(userAvgScore);
   } catch (error) {
