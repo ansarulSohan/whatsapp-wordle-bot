@@ -16,6 +16,6 @@ const { getWeeklyScore } = require('./utils/scoreCalculator');
 const { firstGameNumber, lastGameNumber } = getWeeklyGameNumber(373);
 console.log(firstGameNumber, lastGameNumber);
 
-(async () => {
-  const weekly = await getWeeklyScore('120363043531156080@g.us', 375);
-})();
+// (async () => {
+//   const weekly = await getWeeklyScore('120363043531156080@g.us', 375);
+// })();
