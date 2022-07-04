@@ -99,7 +99,7 @@ const getAvgScore = async (groupId) => {
       });
     }
     // sort the array in descending order according to the avgScore.
-    userAvgScore = _.orderBy(userAvgScore, ['avgScore'], ['desc']);
+    userAvgScore = _.orderBy(userAvgScore, ['avgScore'], ['asc']);
     // console.log('loggin weekly score\n', userAvgScore, '\n********');
     return Promise.resolve(userAvgScore);
   } catch (error) {
@@ -134,6 +134,7 @@ function getWeekStartAndEnd(date) {
 const getWeeklyScore = async (groupId, gameNumber) => {
   try {
     const { weekStart, weekEnd } = getWeekStartAndEnd();
+    const { firstGameNumber, lastGameNumber } = getWeeklyGameNumber(gameNumber);
 
     // Get all participants of the group.
     const { participants } = await Group.findOne({ groupId }).select(
@@ -151,10 +152,9 @@ const getWeeklyScore = async (groupId, gameNumber) => {
     let allScore = await Score.find({
       groupId,
       userId: { $in: users },
-      firstGameNumber: { $gte: gameNumber - 7 },
-      lastGameNumber: { $lte: gameNumber + 7 },
+      gameNumber: { $gte: firstGameNumber, $lte: lastGameNumber },
     }).select(' userId score'); // only select userId and score
-
+    // console.log('allScore', allScore);
     // Loop through the returned collections
     for (let i = 0; i < users.length; i++) {
       // Filter all scores of an individual
@@ -172,8 +172,8 @@ const getWeeklyScore = async (groupId, gameNumber) => {
     // Check if the group info already exists
     const weeklyScoreFromDb = await Weekly.findOne({
       groupId,
-      firstGameNumber: { $gte: gameNumber - 7 },
-      lastGameNumber: { $lte: gameNumber + 7 },
+      firstGameNumber,
+      lastGameNumber,
     });
 
     // if Exists
@@ -185,12 +185,13 @@ const getWeeklyScore = async (groupId, gameNumber) => {
       );
     } else {
       // Else, save a new Entry
-      const { firstGameNumber, lastGameNumber } =
-        getWeeklyGameNumber(gameNumber);
+
       const newData = new Weekly({
         groupId,
         weekStart,
         weekEnd,
+        firstGameNumber,
+        lastGameNumber,
         scores: [...userweeklyAvgScore],
       });
       await newData.save();

@@ -132,11 +132,11 @@ client.on('message', async (message) => {
     const groupId = isGroup ? id._serialized : null;
     const groupName = isGroup ? chat.name : null;
     const contact = await message.getContact();
-    console.log(contact);
+    // console.log(contact);
     const {
       id: { _serialized },
     } = contact;
-    console.log(_serialized);
+    // console.log(_serialized);
 
     // Match to regex to check if the message is a wordle score
     const values = body.match(
@@ -185,7 +185,7 @@ client.on('message', async (message) => {
         userweeklyAvgScore: weeklyAvg,
         firstGameNumber,
         lastGameNumber,
-      } = await getWeeklyScore(groupId);
+      } = await getWeeklyScore(groupId, parseInt(game));
       let weeklyStr = `Weekly Competition\n# ${firstGameNumber} - # ${lastGameNumber}\n`;
       weeklyAvg.forEach((s) => {
         if (s.userId !== client.info.wid.user)
