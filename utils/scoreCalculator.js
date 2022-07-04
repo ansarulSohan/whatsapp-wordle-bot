@@ -45,8 +45,9 @@ const { Weekly } = require('../models/weekly');
  */
 
 const getWeeklyGameNumber = (gameNumber) => {
-  const firstGameNumber = gameNumber - (gameNumber % 7) + 2;
+  const firstGameNumber = gameNumber - ((gameNumber - 2) % 7);
   const lastGameNumber = firstGameNumber + 6;
+
   return { firstGameNumber, lastGameNumber };
 };
 

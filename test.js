@@ -13,5 +13,5 @@ const { getWeeklyGameNumber } = require('./utils/scoreCalculator');
 //   console.log(weekly);
 // })();
 
-const { firstGameNumber, lastGameNumber } = getWeeklyGameNumber(375);
+const { firstGameNumber, lastGameNumber } = getWeeklyGameNumber(373);
 console.log(firstGameNumber, lastGameNumber);

@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const connectDB = () => {
   try {
     mongoose.connect(
-      'mongodb://myUserAdmin:2PtaBc1232tP@localhost:27017/wordle-bot?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false',
+      'mongodb://myAdmin:sohan123@localhost:27017/wordle-bot?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&directConnection=true&ssl=false',
       {
         useNewUrlParser: true,
         useUnifiedTopology: true,
